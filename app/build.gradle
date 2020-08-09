@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 29
@@ -11,7 +12,6 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -21,15 +21,51 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    //this enforces kotlin will compile with Java 8
+    //sometimes when using both Java and Kotlin in the same project, compiler defaults to older JDK
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    //check http://tools.android.com/tech-docs/unit-testing-support#TOC-Method-...-not-mocked.- for more info about this option
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.core:core-ktx:1.3.1'
     implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    // RecyclerView
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    // ViewModel and LiveData
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    // Retrofit2 + gson converter
+    implementation 'com.squareup.retrofit2:retrofit:2.7.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.0'
+    // Picasso image loader
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    // Dotenv: to retrieve CONSUMER_KEY from .env file at runtime
+    implementation 'io.github.cdimascio:java-dotenv:5.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    // JUnit dependency
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    // Needed to use InstantTaskExecutorRule()
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    // Use Mockito for unit tests
+    testImplementation 'org.mockito:mockito-core:2.19.0'
+    testImplementation 'org.mockito:mockito-inline:2.13.0'
+    // Use Mockito for Android tests
+    androidTestImplementation 'org.mockito:mockito-android:2.7.22'
+    // MockWebServer for mocking http calls and response
+    testImplementation "com.squareup.okhttp3:mockwebserver:$okHttpVersion"
+    // Espresso for UI testing
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
 }
